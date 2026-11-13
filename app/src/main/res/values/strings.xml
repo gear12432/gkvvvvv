@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Institute Notebook</string>
+    <string name="sign_in_title">Institute Digital Notebook</string>
+    <string name="sign_in_subtitle">Organize lecture notes, lab reports, and research with auto-save cloud sync and instant PDF export.</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="side_menu_description">Open side navigation menu</string>
+    <string name="add_new_note">Add New Note</string>
+    <string name="search_notes_placeholder">Search notes by title, content, subject, or course code…</string>
+    <string name="clear_search">Clear search</string>
+    <string name="institute_header_badge">ACADEMIC INSTITUTE NOTEBOOK</string>
+    <string name="edit_institute_info">Edit Institute Profile</string>
+    <string name="save_note">Save Note</string>
+    <string name="auto_save_enabled">Auto-Save Active</string>
+    <string name="auto_saving_status">Auto-saving changes…</string>
+    <string name="saved_status">All changes saved</string>
+    <string name="download_pdf">Download PDF</string>
+    <string name="share_note">Share Note</string>
+    <string name="delete_note">Delete Note</string>
+    <string name="pin_note">Pin Note</string>
+    <string name="note_title_label">Note Title</string>
+    <string name="note_title_placeholder">Enter lecture or note title…</string>
+    <string name="note_course_code_label">Course Code</string>
+    <string name="note_course_code_placeholder">e.g. CS-101</string>
+    <string name="note_subject_label">Subject / Category</string>
+    <string name="note_content_label">Notebook Content</string>
+    <string name="note_content_placeholder">Start typing your lecture notes, key formulas, or study summary here… Changes auto-save automatically.</string>
+    <string name="empty_notes_title">Your Institute Notebook is Empty</string>
+    <string name="empty_notes_subtitle">Tap the + Add Note button to create your first note with automatic cloud saving and instant PDF export.</string>
+    <string name="no_search_results_title">No Matching Notes Found</string>
+    <string name="no_search_results_subtitle">Try searching with a different keyword, subject, or course code.</string>
+    <string name="export_all_pdf">Export Entire Notebook as PDF</string>
+    <string name="sign_out">Sign Out</string>
+</resources>

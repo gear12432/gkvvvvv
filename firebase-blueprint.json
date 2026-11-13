@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "Note": {
+      "title": "Note",
+      "description": "A notebook entry belonging to an authenticated user, including institute context, course metadata, content, and timestamps.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the authenticated user who owns this note."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the note (1 to 200 characters)."
+        },
+        "content": {
+          "type": "string",
+          "description": "The full text body of the note (0 to 20000 characters)."
+        },
+        "subject": {
+          "type": "string",
+          "description": "The academic category or subject of the note (1 to 80 characters)."
+        },
+        "courseCode": {
+          "type": "string",
+          "description": "Optional course code or unit identifier (0 to 40 characters)."
+        },
+        "instituteName": {
+          "type": "string",
+          "description": "Name of the academic institute associated with this note (1 to 120 characters)."
+        },
+        "colorIndex": {
+          "type": "integer",
+          "description": "Visual card theme index from 0 to 5."
+        },
+        "isPinned": {
+          "type": "boolean",
+          "description": "Whether the note is pinned to the top of the notebook."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the note was created. Clients must submit FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the note was last modified. Clients must submit FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "content",
+        "subject",
+        "courseCode",
+        "instituteName",
+        "colorIndex",
+        "isPinned",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "InstituteProfile": {
+      "title": "InstituteProfile",
+      "description": "Academic institute header details configured by the user for their notebook and PDF exports.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the authenticated user."
+        },
+        "instituteName": {
+          "type": "string",
+          "description": "The name of the educational institute or university (1 to 120 characters)."
+        },
+        "department": {
+          "type": "string",
+          "description": "Department or faculty name (1 to 100 characters)."
+        },
+        "academicSession": {
+          "type": "string",
+          "description": "Current semester or academic year (1 to 60 characters)."
+        },
+        "studentOrFacultyName": {
+          "type": "string",
+          "description": "Name of the notebook owner (1 to 100 characters)."
+        },
+        "rollOrIdNumber": {
+          "type": "string",
+          "description": "Optional student roll number or faculty ID (0 to 60 characters)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the last profile update. Clients must submit FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "instituteName",
+        "department",
+        "academicSession",
+        "studentOrFacultyName",
+        "rollOrIdNumber",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/notes/{noteId}": {
+      "schema": {
+        "$ref": "#/entities/Note"
+      },
+      "description": "Stores individual notebook entries scoped under each authenticated user."
+    },
+    "/users/{userId}/profile/{profileId}": {
+      "schema": {
+        "$ref": "#/entities/InstituteProfile"
+      },
+      "description": "Stores the user's institute profile metadata for home screen header and PDF headers."
+    }
+  }
+}

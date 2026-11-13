@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 0: Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Entity Validation Helpers
+    function isValidNote(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 20000 &&
+             data.subject is string && data.subject.size() >= 1 && data.subject.size() <= 80 &&
+             data.courseCode is string && data.courseCode.size() <= 40 &&
+             data.instituteName is string && data.instituteName.size() >= 1 && data.instituteName.size() <= 120 &&
+             data.colorIndex is int && data.colorIndex >= 0 && data.colorIndex <= 5 &&
+             data.isPinned is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidInstituteProfile(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.instituteName is string && data.instituteName.size() >= 1 && data.instituteName.size() <= 120 &&
+             data.department is string && data.department.size() >= 1 && data.department.size() <= 100 &&
+             data.academicSession is string && data.academicSession.size() >= 1 && data.academicSession.size() <= 60 &&
+             data.studentOrFacultyName is string && data.studentOrFacultyName.size() >= 1 && data.studentOrFacultyName.size() <= 100 &&
+             data.rollOrIdNumber is string && data.rollOrIdNumber.size() <= 60 &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // User-scoped Notes Subcollection
+    match /users/{userId}/notes/{noteId} {
+      allow get: if isOwner(userId) && isValidId(userId) && isValidId(noteId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidId(noteId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'title', 'content', 'subject', 'courseCode',
+                         'instituteName', 'colorIndex', 'isPinned', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'title', 'content', 'subject', 'courseCode',
+                         'instituteName', 'colorIndex', 'isPinned', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidNote(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidId(noteId) &&
+                       isValidNote(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'title', 'content', 'subject', 'courseCode',
+                         'instituteName', 'colorIndex', 'isPinned', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(userId) && isValidId(noteId);
+    }
+
+    // User-scoped Institute Profile Subcollection
+    match /users/{userId}/profile/{profileId} {
+      allow get: if isOwner(userId) && isValidId(userId) && isValidId(profileId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidId(profileId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'instituteName', 'department', 'academicSession',
+                         'studentOrFacultyName', 'rollOrIdNumber', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'instituteName', 'department', 'academicSession',
+                         'studentOrFacultyName', 'rollOrIdNumber', 'updatedAt'
+                       ]) &&
+                       isValidInstituteProfile(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidId(profileId) &&
+                       isValidInstituteProfile(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'instituteName', 'department', 'academicSession',
+                         'studentOrFacultyName', 'rollOrIdNumber', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(userId) && isValidId(profileId);
+    }
+  }
+}

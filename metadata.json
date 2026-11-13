@@ -1,0 +1,6 @@
+{
+  "name": "Institute Notebook",
+  "description": "A feature-rich digital notebook application with institute branding, side navigation drawer, auto-save and manual save notes, search, PDF export, and note sharing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
